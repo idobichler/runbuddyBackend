@@ -1,3 +1,4 @@
+const bodyParser = require("body-parser");
 const path = require('path');
 const express = require('express');
 const session = require('express-session');
@@ -17,7 +18,7 @@ const sessionConfig = {
         secure: false,
         httpOnly: true
     },
-    resave: false
+    resave: false,
 }
 
 app.use(session(sessionConfig));
@@ -26,6 +27,6 @@ app.use(bodyParser.urlencoded({ extended: true }))
 
 
 app.use(express.static(path.join(__dirname, '/static')));
-app.use('/auth/auth', authRouter);
+app.use('/auth', authRouter);
 
 app.listen(PORT);
