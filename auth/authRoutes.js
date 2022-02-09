@@ -25,7 +25,6 @@ router.post("/register", async (req, res) => {
 router.post('/login', async (req,res)=>{
     let user = req.body.username;
     let pass = req.body.password;
-
     res.setHeader('Access-Control-Allow-Credentials', 'true')
 
     try {
@@ -39,11 +38,11 @@ router.post('/login', async (req,res)=>{
                 };
                 res.send({result: true});
             } else {
-                res.send({result: false, reason: 'UP'});
+                res.send({result: false, reason: "UP"});
             }
         }
         else {
-            res.send({result: false, reason: 'U'});
+            res.send({result: false, reason: "U"});
         }
     } catch (error) {
         console.error(error);
