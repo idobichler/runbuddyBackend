@@ -11,7 +11,6 @@ router.post("/register", async (req, res) => {
         username: req.body.username,
         password: req.body.password
     };
-    console.log(user);
     await persist.addNewUser(user).then((result) => {
         if (result) {
             res.sendStatus(200);
@@ -25,6 +24,7 @@ router.post("/register", async (req, res) => {
 router.post('/login', async (req,res)=>{
     let user = req.body.username;
     let pass = req.body.password;
+
     res.setHeader('Access-Control-Allow-Credentials', 'true')
 
     try {
@@ -46,6 +46,7 @@ router.post('/login', async (req,res)=>{
         }
     } catch (error) {
         console.error(error);
+        res.sendStatus(500);
     }
 });
 

@@ -17,10 +17,10 @@ async function initDB() {
     }
 
     usersDB = new AsyncNedb({filename: USERS_DB_PATH, autoload: true});
-    activitiesDB = new AsyncNedb({filename: USERS_DB_PATH, autoload: true});
+    activitiesDB = new AsyncNedb({filename: ACTIVITIES_DB_PATH, autoload: true});
 
     if (!checkIfExistsUsers) {
-        await addNewUser({username:'admin', password: 'admin', radius: null});
+        await addNewUser({username:'admin', password: 'admin', radius: null, latitude: null, longitude: null});
     }
     return true;
 }
@@ -33,7 +33,9 @@ async function addNewUser(user){
         let newUser = {
             username: user.username,
             password: hashedPassword,
-            radius: null
+            radius: null,
+            latitude: null,
+            longitude: null
         };
 
         return await usersDB.asyncInsert(newUser);
@@ -43,12 +45,13 @@ async function addNewUser(user){
     }
 }
 
-async function setRadius(username, radius){
-    const exists = await findUser(username);
-    if (exists){
+async function setRadius(username, radius, latitude, longitude){
+    let user = await findUser(username);
+
+    if (user){
         await usersDB.asyncUpdate(
             { username: username},
-            { $set: { radius: radius} },
+            { $set: { radius: radius, latitude: latitude, longitude: longitude} },
             {}
         );
     }
@@ -65,4 +68,4 @@ initDB().then(res => {
     if (res) console.log('DB`s initialized successfully.')
 });
 
-module.exports = {addNewUser,findUser};
+module.exports = {addNewUser,findUser, setRadius};
