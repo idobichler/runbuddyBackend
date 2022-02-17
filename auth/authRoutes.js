@@ -9,7 +9,10 @@ const bcrypt = require("bcrypt");
 router.post("/register", async (req, res) => {
     let user = {
         username: req.body.username,
-        password: req.body.password
+        password: req.body.password,
+        radius: null,
+        latitude: null,
+        longitude: null
     };
     await persist.addNewUser(user).then((result) => {
         if (result) {

@@ -64,8 +64,44 @@ async function findUser(username) {
     return await usersDB.asyncFindOne({username: username});
 }
 
+async function getAllUsersExceptThis(username){
+    // console.log(users);
+    return await usersDB.asyncFind({username: {$ne: username}});
+}
+
+async function addActivity(username, distance, time){
+    let now = new Date().getTime()/1000;
+    if(new Date(time).getTime() > now ){
+        let activity = {
+            starterUser: username,
+            distance: distance,
+            time: time
+        }
+
+        return await activitiesDB.asyncInsert(activity);
+    }
+    else{
+        throw new Error("Date is in the past");
+    }
+
+}
+
+async function getActivities(username){
+    if (username){
+        return await activitiesDB.asyncFind({starterUser: username});
+    }
+    else{
+        return await activitiesDB.asyncFind({});
+    }
+}
+
+async function removeActivity(id){
+    return await activitiesDB.asyncRemove({_id: id});
+}
+
 initDB().then(res => {
     if (res) console.log('DB`s initialized successfully.')
 });
 
-module.exports = {addNewUser,findUser, setRadius};
+
+module.exports = {addNewUser,findUser, setRadius, getAllUsersExceptThis, addActivity, removeActivity, getActivities};
