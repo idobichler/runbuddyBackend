@@ -16,9 +16,9 @@ router.post("/register", async (req, res) => {
     };
     await persist.addNewUser(user).then((result) => {
         if (result) {
-            res.sendStatus(200);
+            res.send({result: true});
         } else {
-            res.sendStatus(401);
+            res.send({result: false, reason: "error"});
         }
 
     });
