@@ -16,6 +16,24 @@ async function getActivitiesForUser(username){
     return activities;
 }
 
+async function getUsersToNotify(username){
+    let user = await persist.findUser(username);
+    let otherUsers = await persist.getAllUsersExceptThis(username);
+    let notification = [];
+
+    for(let i=0; i<otherUsers.length; i++){
+        let distance = getDistanceFromLatLonInKm(user.latitude, user.longitude, otherUsers[i].latitude, otherUsers[i].longitude);
+        let radiusSum = user.radius + otherUsers[i].radius;
+        if(radiusSum > distance){
+            let userActivities = await persist.getActivities(otherUsers[i].username);
+            notification = notification.concat(userActivities);
+        }
+    }
+    return notification;
+
+}
+
+
 async function clearPassedActivities(){
     let now = new Date().getTime()/1000;
     let userActivities = await persist.getActivities(null);
@@ -44,4 +62,4 @@ function deg2rad(deg) {
     return deg * (Math.PI/180)
 }
 
-module.exports = {getActivitiesForUser,clearPassedActivities};
+module.exports = {getActivitiesForUser,clearPassedActivities,getUsersToNotify};

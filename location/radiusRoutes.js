@@ -25,6 +25,7 @@ router.post('/add_activity',async (req,res)=>{
     let time = req.body.time;
     try{
         await persist.addActivity(req.session.user.username, distance, time);
+        await persist.addNotification(req.session.user.username, distance);
         res.sendStatus(200);
     }
     catch (error){

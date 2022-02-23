@@ -1,11 +1,14 @@
+
 const fs = require('fs')
 const {AsyncNedb} = require('nedb-async')
 const bcrypt = require("bcrypt");
 const USERS_DB_PATH = './DB/users.db';
 const ACTIVITIES_DB_PATH = './DB/activities.db';
+const NOTIFICATION_DB_PATH = './DB/notification.db';
 
 let usersDB;
 let activitiesDB;
+let notificationDB;
 
 async function initDB() {
     let checkIfExistsUsers;
@@ -18,6 +21,8 @@ async function initDB() {
 
     usersDB = new AsyncNedb({filename: USERS_DB_PATH, autoload: true});
     activitiesDB = new AsyncNedb({filename: ACTIVITIES_DB_PATH, autoload: true});
+    notificationDB = new AsyncNedb({filename: NOTIFICATION_DB_PATH, autoload: true});
+
 
     if (!checkIfExistsUsers) {
         await addNewUser({username:'admin', password: 'admin', radius: null, latitude: null, longitude: null});
@@ -83,7 +88,15 @@ async function addActivity(username, distance, time){
     else{
         throw new Error("Date is in the past");
     }
+}
 
+async function addNotification(username,distance){
+    let notify = {
+        notifierUser: username,
+        distance: distance
+    }
+
+    return await activitiesDB.asyncInsert(notify);
 }
 
 async function getActivities(username){
@@ -99,9 +112,10 @@ async function removeActivity(id){
     return await activitiesDB.asyncRemove({_id: id});
 }
 
+
 initDB().then(res => {
     if (res) console.log('DB`s initialized successfully.')
 });
 
 
-module.exports = {addNewUser,findUser, setRadius, getAllUsersExceptThis, addActivity, removeActivity, getActivities};
+module.exports = {addNewUser,findUser, setRadius, getAllUsersExceptThis, addActivity, removeActivity, getActivities, addNotification};
